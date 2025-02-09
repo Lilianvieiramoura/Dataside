@@ -28,12 +28,17 @@ const getAllUsers = async (req, res) => {
     queryParams.push(`${nome}%`);
   }
 
-  if(ordenar === 'idade') {
+  if(ordenar === 'dataNascimento') {
     query += 'ORDER BY dataNascimento ASC'
   }
 
   const [rows] = await connection.execute(query, queryParams);
-  res.status(200).json(rows);
+
+  const users = rows.map(user => ({
+    ...user,
+    dataNascimento: new Date(user.dataNascimento).toLocaleDateString("pt-BR")
+  }));
+  res.status(200).json(users);
 }
 
 const getUserById = async (req, res) => {
